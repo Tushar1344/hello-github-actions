@@ -1,0 +1,36 @@
+name: Validate Skills
+
+on:
+  push:
+    paths:
+      - 'skillforge/skills/**'
+  pull_request:
+    paths:
+      - 'skillforge/skills/**'
+
+jobs:
+  validate-skills:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r skillforge/requirements.txt
+
+      - name: Validate skills
+        run: python skillforge/scripts/validate_skills.py
+
+      - name: Detect orphan skills
+        run: python skillforge/scripts/detect_orphans.py
+
+      - name: Enforce versioning
+        if: github.event_name == 'pull_request'
+        run: |
+          python skillforge/scripts/enforce_versioning.py \
+            --base-ref origin/${{ github.base_ref }}

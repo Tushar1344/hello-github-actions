@@ -1,5 +1,5 @@
-## Welcome to "Hello World" with GitHub Actions
+## SkillForge
 
-This course will walk you through writing your first action and using it with a workflow file. 
+**Unified Lifecycle Governance System for Skills and Plug-Ins**
 
-**Ready to get started? Navigate to the first issue.**
+See [skillforge/README.md](skillforge/README.md) for full documentation.

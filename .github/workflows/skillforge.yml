@@ -1,0 +1,68 @@
+name: SkillForge Governance
+
+on:
+  push:
+    paths:
+      - 'skillforge/**'
+  pull_request:
+    paths:
+      - 'skillforge/**'
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r skillforge/requirements.txt
+
+      - name: Validate skills
+        run: python skillforge/scripts/validate_skills.py
+
+      - name: Validate plugins
+        run: python skillforge/scripts/validate_plugins.py
+
+      - name: Detect orphans
+        run: python skillforge/scripts/detect_orphans.py
+
+      - name: Run maturity score
+        run: python skillforge/scripts/maturity_score.py
+
+      - name: Run tests
+        run: |
+          cd skillforge
+          python -m pytest tests/ skills/tests/ -v --tb=short 2>/dev/null || \
+          python -m unittest discover -s tests -v 2>&1 && \
+          python -m unittest discover -s skills/tests -v 2>&1
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Check for hardcoded secrets
+        run: |
+          PATTERNS=('password\s*=' 'secret\s*=' 'api_key\s*=' 'BEGIN RSA PRIVATE KEY')
+          FOUND=0
+          for pattern in "${PATTERNS[@]}"; do
+            if grep -rni "$pattern" skillforge/ \
+                --include='*.py' --include='*.json' --include='*.yaml' \
+                --exclude-dir='.git' --exclude='security_scan.yml' 2>/dev/null; then
+              FOUND=1
+            fi
+          done
+          if [ $FOUND -eq 1 ]; then
+            echo "Potential secrets detected. Review required."
+            exit 1
+          fi
+          echo "Security scan passed."

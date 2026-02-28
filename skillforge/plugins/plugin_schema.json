@@ -1,0 +1,92 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "SkillForge Plugin Registry Schema",
+  "description": "Defines the required structure for plugin entries in registry.json",
+  "type": "object",
+  "required": [
+    "name",
+    "version",
+    "status",
+    "api_version",
+    "owner",
+    "permissions",
+    "healthcheck_url",
+    "slo"
+  ],
+  "properties": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]+$",
+      "description": "Unique plugin identifier (snake_case)"
+    },
+    "version": {
+      "type": "string",
+      "pattern": "^\\d+\\.\\d+\\.\\d+$",
+      "description": "Semantic version (MAJOR.MINOR.PATCH)"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "active", "deprecated", "retired"],
+      "description": "Current lifecycle state"
+    },
+    "api_version": {
+      "type": "string",
+      "pattern": "^v\\d+$",
+      "description": "API version identifier (e.g., v1, v2)"
+    },
+    "owner": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Team or individual responsible for the plugin"
+    },
+    "permissions": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "external_api",
+          "database",
+          "filesystem",
+          "network",
+          "secrets",
+          "compute"
+        ]
+      },
+      "minItems": 0,
+      "description": "Required permissions for the plugin"
+    },
+    "healthcheck_url": {
+      "type": "string",
+      "pattern": "^/",
+      "description": "Healthcheck endpoint path"
+    },
+    "slo": {
+      "type": "object",
+      "required": ["latency_p95_ms", "error_rate_percent"],
+      "properties": {
+        "latency_p95_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 30000,
+          "description": "P95 latency SLO in milliseconds"
+        },
+        "error_rate_percent": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Maximum acceptable error rate percentage"
+        }
+      }
+    },
+    "deprecation_date": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}$",
+      "description": "Planned deprecation date (ISO 8601)"
+    },
+    "replacement": {
+      "type": "string",
+      "description": "Name of the replacement plugin if deprecated"
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,74 @@
+---
+# SkillForge Skill Schema Definition
+# Defines the required metadata structure for each skill entry in skills.md
+
+schema_version: "1.0.0"
+
+required_fields:
+  - name: "Skill Name"
+    type: "string"
+    description: "Unique name of the skill"
+    pattern: "^[A-Za-z][A-Za-z0-9 _-]+$"
+
+  - name: "Owner"
+    type: "string"
+    description: "Team or individual responsible for the skill"
+    pattern: "^[a-z0-9][a-z0-9-]+$"
+
+  - name: "Version"
+    type: "semver"
+    description: "Semantic version (MAJOR.MINOR.PATCH)"
+    pattern: "^\\d+\\.\\d+\\.\\d+$"
+
+  - name: "Status"
+    type: "enum"
+    description: "Current lifecycle state"
+    values:
+      - "Draft"
+      - "Active"
+      - "Deprecated"
+      - "Retired"
+
+  - name: "Dependencies"
+    type: "string"
+    description: "Comma-separated list of dependencies or N/A"
+
+  - name: "Last Reviewed"
+    type: "date"
+    description: "ISO 8601 date of last review"
+    pattern: "^\\d{4}-\\d{2}-\\d{2}$"
+
+  - name: "Test Coverage"
+    type: "percentage"
+    description: "Test coverage percentage (0-100)"
+    pattern: "^\\d{1,3}%$"
+    minimum: 0
+    maximum: 100
+
+  - name: "Risk Level"
+    type: "enum"
+    description: "Risk classification"
+    values:
+      - "Low"
+      - "Medium"
+      - "High"
+
+  - name: "Deprecation Date"
+    type: "date_or_na"
+    description: "Planned deprecation date or N/A"
+    pattern: "^(\\d{4}-\\d{2}-\\d{2}|N/A)$"
+
+validation_rules:
+  min_test_coverage: 80
+  max_review_age_days: 90
+  version_must_increment: true
+
+lifecycle_transitions:
+  Draft:
+    allowed_next: ["Active", "Retired"]
+  Active:
+    allowed_next: ["Deprecated", "Retired"]
+  Deprecated:
+    allowed_next: ["Retired", "Active"]
+  Retired:
+    allowed_next: []

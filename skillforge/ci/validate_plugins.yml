@@ -1,0 +1,33 @@
+name: Validate Plugins
+
+on:
+  push:
+    paths:
+      - 'skillforge/plugins/**'
+  pull_request:
+    paths:
+      - 'skillforge/plugins/**'
+
+jobs:
+  validate-plugins:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r skillforge/requirements.txt
+
+      - name: Validate plugins
+        run: python skillforge/scripts/validate_plugins.py
+
+      - name: Enforce versioning
+        if: github.event_name == 'pull_request'
+        run: |
+          python skillforge/scripts/enforce_versioning.py \
+            --base-ref origin/${{ github.base_ref }}
