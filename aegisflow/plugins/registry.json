@@ -1,0 +1,30 @@
+[
+  {
+    "name": "weather_plugin",
+    "version": "2.1.0",
+    "status": "active",
+    "api_version": "v1",
+    "owner": "platform-team",
+    "permissions": ["external_api"],
+    "healthcheck_url": "/health",
+    "slo": {
+      "latency_p95_ms": 800,
+      "error_rate_percent": 1
+    }
+  },
+  {
+    "name": "legacy_parser",
+    "version": "1.0.0",
+    "status": "deprecated",
+    "api_version": "v1",
+    "owner": "platform-team",
+    "permissions": ["filesystem"],
+    "healthcheck_url": "/health",
+    "slo": {
+      "latency_p95_ms": 500,
+      "error_rate_percent": 2
+    },
+    "deprecation_date": "2026-03-01",
+    "replacement": "modern_parser"
+  }
+]
