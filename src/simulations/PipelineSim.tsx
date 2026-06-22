@@ -75,8 +75,8 @@ export function PipelineSim() {
       </div>
 
       <div className="sim-row">
-        <div style={{ overflowX: "auto" }}>
-          <svg width={W} height={H} style={{ display: "block" }}>
+        <div className="scroll-x">
+          <svg width={W} height={H} style={{ display: "block", maxWidth: "none" }}>
             {/* cycle header */}
             {Array.from({ length: maxC }).map((_, c) => (
               <text

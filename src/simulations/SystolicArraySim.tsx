@@ -81,7 +81,7 @@ export function SystolicArraySim() {
       </div>
 
       <div className="sim-row">
-        <svg width={W} height={H} style={{ display: "block", maxWidth: "100%" }}>
+        <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{ display: "block", maxWidth: "100%" }}>
           {/* top B-feed labels */}
           {Array.from({ length: n }).map((_, j) => (
             <text

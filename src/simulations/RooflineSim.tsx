@@ -36,7 +36,7 @@ export function RooflineSim() {
       </div>
 
       <div className="sim-row">
-        <svg width={W} height={H} style={{ display: "block" }}>
+        <svg width={W} height={H} viewBox={`0 0 ${W} ${H}`} style={{ display: "block", maxWidth: "100%", height: "auto" }}>
           {/* axes */}
           <line x1={PAD} y1={H - PAD} x2={W - 6} y2={H - PAD} stroke="var(--line-strong)" strokeWidth={1} />
           <line x1={PAD} y1={H - PAD} x2={PAD} y2={10} stroke="var(--line-strong)" strokeWidth={1} />
