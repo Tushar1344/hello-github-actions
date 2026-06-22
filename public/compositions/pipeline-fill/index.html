@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pipeline fill</title>
+    <style>
+      :root {
+        --paper: #fbfcfe; --ink: #11212b; --muted: #566571; --line: #d9e2ec;
+        --teal: #15a39c; --teal-deep: #0d7c77; --teal-bg: #e2f3f1;
+      }
+      html, body { margin: 0; background: var(--paper); }
+      * { box-sizing: border-box; }
+      .stage { font-family: "Chivo Mono", ui-monospace, monospace; padding: 28px; }
+      .cap { text-align: center; font-size: 11px; color: var(--muted); letter-spacing: 0.05em; margin-top: 8px; }
+    </style>
+  </head>
+  <body>
+    <div class="stage">
+      <svg id="svg" viewBox="0 0 640 230" width="100%"></svg>
+      <div class="cap">a pipeline filling · once full, one result leaves every clock tick</div>
+    </div>
+
+    <script>
+      const K = 4, N = 7, DURATION = 5.0;
+      const X0 = 60, STAGEW = 110, Y = 70, BOXH = 64, R = 14;
+      const TOTAL = N + K; // cycles until last token exits
+      const SVGNS = "http://www.w3.org/2000/svg";
+      const svg = document.getElementById("svg");
+      const STAGE_NAMES = ["fetch", "decode", "exec", "write"];
+
+      // static: stage boxes + output counter slot
+      for (let s = 0; s < K; s++) {
+        const r = document.createElementNS(SVGNS, "rect");
+        r.setAttribute("x", X0 + s * STAGEW); r.setAttribute("y", Y);
+        r.setAttribute("width", STAGEW - 18); r.setAttribute("height", BOXH);
+        r.setAttribute("rx", 10); r.setAttribute("fill", "var(--paper)");
+        r.setAttribute("stroke", "var(--line)"); r.setAttribute("stroke-width", 1.5);
+        svg.appendChild(r);
+        const t = document.createElementNS(SVGNS, "text");
+        t.setAttribute("x", X0 + s * STAGEW + (STAGEW - 18) / 2);
+        t.setAttribute("y", Y + BOXH + 18); t.setAttribute("text-anchor", "middle");
+        t.setAttribute("font-size", 10); t.setAttribute("fill", "var(--muted)");
+        t.textContent = STAGE_NAMES[s];
+        svg.appendChild(t);
+      }
+      const outLabel = document.createElementNS(SVGNS, "text");
+      outLabel.setAttribute("x", X0 + K * STAGEW + 6); outLabel.setAttribute("y", Y + 4);
+      outLabel.setAttribute("font-size", 10); outLabel.setAttribute("fill", "var(--muted)");
+      outLabel.textContent = "DONE";
+      svg.appendChild(outLabel);
+      const outCount = document.createElementNS(SVGNS, "text");
+      outCount.setAttribute("x", X0 + K * STAGEW + 6); outCount.setAttribute("y", Y + 44);
+      outCount.setAttribute("font-family", "Source Serif 4, Georgia, serif");
+      outCount.setAttribute("font-size", 38); outCount.setAttribute("fill", "var(--teal-deep)");
+      svg.appendChild(outCount);
+
+      // dynamic token layer
+      const tokenLayer = document.createElementNS(SVGNS, "g");
+      svg.appendChild(tokenLayer);
+
+      window.seek = function (t) {
+        const tau = t * TOTAL;
+        while (tokenLayer.firstChild) tokenLayer.removeChild(tokenLayer.firstChild);
+        for (let i = 0; i < N; i++) {
+          const pos = tau - i; // continuous stage position
+          if (pos < -0.5 || pos > K - 0.5) continue;
+          const cx = X0 + (STAGEW - 18) / 2 + pos * STAGEW;
+          const c = document.createElementNS(SVGNS, "circle");
+          c.setAttribute("cx", cx); c.setAttribute("cy", Y + BOXH / 2); c.setAttribute("r", R);
+          c.setAttribute("fill", "var(--teal-deep)"); c.setAttribute("opacity", 0.9);
+          tokenLayer.appendChild(c);
+          const lt = document.createElementNS(SVGNS, "text");
+          lt.setAttribute("x", cx); lt.setAttribute("y", Y + BOXH / 2 + 4);
+          lt.setAttribute("text-anchor", "middle"); lt.setAttribute("font-size", 11);
+          lt.setAttribute("fill", "#fff"); lt.textContent = i + 1;
+          tokenLayer.appendChild(lt);
+        }
+        const done = Math.max(0, Math.min(N, Math.floor(tau - K) + 1));
+        outCount.textContent = done;
+      };
+
+      if (!window.__RENDER__) {
+        const start = performance.now();
+        (function frame(now) {
+          window.seek((((now - start) / 1000) / DURATION) % 1);
+          requestAnimationFrame(frame);
+        })(start);
+      } else {
+        window.seek(0);
+      }
+
+      const postH = () =>
+        parent.postMessage({ type: "embed-height", height: document.body.scrollHeight }, "*");
+      new ResizeObserver(postH).observe(document.body);
+      window.addEventListener("load", postH);
+    </script>
+  </body>
+</html>
