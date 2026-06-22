@@ -143,7 +143,7 @@ export function LogicGateSim() {
         </div>
       ) : (
         <div className="sim-row">
-          <svg width={360} height={170} style={{ display: "block", maxWidth: "100%" }}>
+          <svg width={360} height={170} viewBox="0 0 360 170" style={{ display: "block", maxWidth: "100%" }}>
             {/* input rails */}
             <text x={6} y={48} fontFamily="var(--mono)" fontSize={12} fill="var(--ink)">
               A

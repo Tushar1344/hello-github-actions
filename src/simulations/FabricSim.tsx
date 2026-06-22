@@ -39,7 +39,12 @@ export function FabricSim() {
       </div>
 
       <div className="sim-row">
-        <svg width={GRID * CELL} height={GRID * CELL} style={{ display: "block" }}>
+        <svg
+          width={GRID * CELL}
+          height={GRID * CELL}
+          viewBox={`0 0 ${GRID * CELL} ${GRID * CELL}`}
+          style={{ display: "block", maxWidth: "100%", height: "auto" }}
+        >
           {Array.from({ length: GRID * GRID }).map((_, idx) => {
             const r = Math.floor(idx / GRID);
             const c = idx % GRID;
