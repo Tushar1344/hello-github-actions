@@ -1,5 +1,7 @@
 # Chip Design From the Bottom Up
 
+**Live:** https://tushar1344.github.io/chip-design/
+
 An interactive book that builds an AI accelerator from first principles — from a single
 transistor acting as a switch, up to the systolic array at the heart of every TPU. It is a
 reconstruction of the Dwarkesh Patel × Reiner Pope lecture
