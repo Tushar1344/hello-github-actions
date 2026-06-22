@@ -60,7 +60,8 @@ commits the MP4s back, which triggers a redeploy.
 
 `.github/workflows/deploy.yml` builds the app and deploys it to **GitHub Pages**. Enable Pages
 with the **GitHub Actions** source in repository settings. The site is served under
-`/hello-github-actions/`; `public/404.html` provides the SPA deep-link fallback.
+`/<repo-name>/` (the deploy workflow sets `VITE_BASE` from the repo name automatically);
+`public/404.html` provides the SPA deep-link fallback.
 
 ## Theming
 

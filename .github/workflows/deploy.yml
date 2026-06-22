@@ -28,6 +28,10 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npm run build
+        env:
+          # Base path tracks the repo name, so renaming the repo (and thus the
+          # Pages URL /<repo>/) never breaks asset paths.
+          VITE_BASE: /${{ github.event.repository.name }}/
       - uses: actions/configure-pages@v5
         with:
           # Auto-create the Pages site (build type: GitHub Actions) so no manual
