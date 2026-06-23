@@ -122,7 +122,7 @@ export function MacBuilderSim() {
       <div style={{ marginTop: 22, paddingTop: 16, borderTop: "1px solid var(--line)" }}>
         <h4 style={{ margin: "0 0 14px" }}>2 · Accumulate a dot product — the MAC</h4>
         <div className="sim-row">
-          <div className="sim-col" style={{ minWidth: 280 }}>
+          <div className="sim-col" style={{ minWidth: 0 }}>
             <table style={{ width: "100%", borderCollapse: "collapse", fontFamily: "var(--mono)", fontSize: 13 }}>
               <thead>
                 <tr style={{ color: "var(--muted)" }}>
